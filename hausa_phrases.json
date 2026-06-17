@@ -1,0 +1,88 @@
+{
+  "metadata": {
+    "language": "Hausa",
+    "region": "Nigeria",
+    "version": "1.0",
+    "author": "Buhari Salisu",
+    "date": "2026-06-17"
+  },
+  
+  "greetings": {
+    "morning": "Barka da safiya!",
+    "afternoon": "Barka da rana!",
+    "evening": "Barka da yamma!",
+    "welcome": "Barka da zuwa Vision-Link AI!",
+    "goodbye": "Sai an jima. Allah ya kiyaye ku."
+  },
+  
+  "system": {
+    "ready": "Vision-Link AI tana shirye.",
+    "starting": "Na fara aiki.",
+    "stopping": "Na daina aiki.",
+    "error": "Akwai matsala. Sake gwadawa.",
+    "success": "An yi nasara.",
+    "processing": "Ina aiki...",
+    "listening": "Ina saurara...",
+    "speaking": "Ina magana..."
+  },
+  
+  "object_detection": {
+    "person_detected": "Na gano mutum a gaban ku.",
+    "people_detected": "Na gano mutane {count} a gaban ku.",
+    "vehicle_detected": "Na gano mota a gaban ku.",
+    "obstacle_detected": "Akwai abin hani a gaban ku. Ku tsaya.",
+    "staircase_detected": "Na gano matakai. Ku yi hankali.",
+    "door_detected": "Na gano kofa a gaban ku.",
+    "chair_detected": "Na gano kujera a gaban ku.",
+    "table_detected": "Na gano tebur a gaban ku.",
+    "no_objects": "Babu abu na musamman a gaban ku."
+  },
+  
+  "ocr": {
+    "reading": "Ina karatu rubutu...",
+    "text_detected": "Na gano rubutu: {text}",
+    "no_text": "Babu rubutu da na iya karatu.",
+    "sign_detected": "Na gano alama: {text}",
+    "label_detected": "Na gano lakabin: {text}"
+  },
+  
+  "navigation": {
+    "getting_location": "Ina neman wurin ku...",
+    "location_found": "Wurin ku: {location}",
+    "calculating_route": "Ina lissafa hanya...",
+    "turn_left": "Koma hagu.",
+    "turn_right": "Koma dama.",
+    "go_straight": "Tafi kai tsaye.",
+    "turn_around": "Juya baya.",
+    "destination_reached": "Kun isa wurin ku. Barka da waraka!",
+    "distance_remaining": "Tafi {distance} har zuwa wurin ku.",
+    "obstacle_ahead": "Akwai abin hani a gaban ku. Ku kauce."
+  },
+  
+  "face_recognition": {
+    "scanning": "Ina duba fuska...",
+    "known_face": "Wannan {name} ne.",
+    "unknown_face": "Wannan mutumin ba na san shi ba.",
+    "multiple_faces": "Na gano fuska {count}."
+  },
+  
+  "emergency": {
+    "alert_sent": "An aika saƙon gaggawa.",
+    "help_coming": "Taimako yana zuwa.",
+    "stay_calm": "Ku yi hakuri. Taimako yana zuwa.",
+    "location_shared": "An raba wurin ku: {location}"
+  },
+  
+  "whatsapp": {
+    "message_received": "An karbi saƙo daga {sender}.",
+    "status_update": "Vision-Link status: {status}",
+    "battery_low": "Batirin ya ƙaranciya. Da fatan za a caji."
+  },
+  
+  "button_commands": {
+    "single_press": "Karatu rubutu.",
+    "double_press": "Gano abubuwa.",
+    "long_press": "Kira gaggawa.",
+    "triple_press": "Jagoranci."
+  }
+}
