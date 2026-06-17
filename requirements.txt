@@ -1,0 +1,21 @@
+
+# 1. BACKEND - requirements.txt
+backend_req = """# Vision-Link AI Smart Glass - Backend Requirements
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+pillow==10.2.0
+openai==1.12.0
+httpx==0.26.0
+pydantic==2.6.0
+pydantic-settings==2.1.0
+python-dotenv==1.0.0
+requests==2.31.0
+numpy==1.26.3
+gtts==2.5.0
+"""
+
+with open(f"{project_dir}/backend/requirements.txt", "w") as f:
+    f.write(backend_req)
+
+print("✅ backend/requirements.txt created")
