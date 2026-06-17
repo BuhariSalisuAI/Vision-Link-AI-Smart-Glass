@@ -3,7 +3,6 @@ tensorflow
 torch
 pyttsx3
 speechrecognition
-pyaudio
 flask
 requests
 numpy
