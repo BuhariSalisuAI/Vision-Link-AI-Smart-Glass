@@ -1,8 +1,8 @@
-from core.speech_recognition import listen
-from core.text_to_speech import speak_hausa
-from core.object_detection import detect_objects
-from core.ocr_reader import read_text
-from core.navigation import get_directions
+from speech_recognition import listen
+from text_to_speech import speak_hausa
+from object_detection import detect_objects
+from ocr_reader import read_text
+from navigation import get_directions
 
 def main():
     speak_hausa("Barka da rana! Vision-Link AI tana shirye.")
