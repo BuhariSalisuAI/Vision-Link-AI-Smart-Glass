@@ -2,7 +2,7 @@ from speech_recognition import listen_for_command
 from TTS import speak_hausa
 from object_detection import detect_objects
 from ocr_reader import OCRReader
-from navigation import get_directions
+from navigation import NavigationSystem
 
 def main():
     speak_hausa("Barka da rana! Vision-Link AI tana shirye.")
@@ -19,7 +19,7 @@ def main():
             speak_hausa(text)
         
         elif "hanya" in command:
-            directions = get_directions()
+            directions = NavigationSystem().get_directions('Kano')
             speak_hausa(directions)
 
 if __name__ == "__main__":
