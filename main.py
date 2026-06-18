@@ -1,4 +1,4 @@
-from speech_recognition import listen
+from speech_recognition import listen_for_command
 from text_to_speech import speak_hausa
 from object_detection import detect_objects
 from ocr_reader import read_text
@@ -8,7 +8,7 @@ def main():
     speak_hausa("Barka da rana! Vision-Link AI tana shirye.")
     
     while True:
-        command = listen()
+        command = listen_for_command()
         
         if "abubuwa" in command:
             objects = detect_objects()
