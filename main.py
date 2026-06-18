@@ -1,43 +1,52 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File
 from pydantic import BaseModel
+import shutil
+import os
 
 # 1. Janyo fayilolin ayyukan AI dinka
 from ocr_reader import OCRReader
 from navigation import NavigationSystem
-# Idan kana da wani fayil na gane abubuwa (object detection), zaka iya kara shi anan gaba
 
 # 2. Kirkirar sabar API
 app = FastAPI()
 
-# 3. Tsarin karbar bayani (misali: idan za a turo sunan gari/unguwa)
 class Waje(BaseModel):
     unguwa: str
 
-# ==========================================
-# KOFOFIN API DINMU (ENDPOINTS)
-# ==========================================
-
-# Kofa ta 0: Gwajin Sabar (Don tabbatar tana raye)
+# Kofa ta 0: Gwajin Sabar
 @app.get("/")
 def home():
     return {"message": "Vision-Link AI is Live and Running!"}
 
-# Kofa ta 1: Karanta Rubutu (OCR)
+# ==========================================
+# SABON TSARIN KOFAR KARATU (Tana karbar hoto yanzu)
+# ==========================================
 @app.post("/karatu")
-def karanta_rubutu():
-    # Aikin karanta rubutu daga OCR
-    text = OCRReader().read_text() 
-    return {"sakamako": text, "matsayi": "An yi nasara"}
+async def karanta_rubutu(hoto: UploadFile = File(...)):
+    try:
+        # 1. Ajiye hoton da aka turo na wucin gadi a cikin sabar
+        file_location = f"temp_{hoto.filename}"
+        with open(file_location, "wb") as buffer:
+            shutil.copyfileobj(hoto.file, buffer)
+        
+        # 2. Mika hoton zuwa ga aikin OCR don ya karanta rubutun
+        text = OCRReader().read_text(file_location) 
+        
+        # 3. Goge hoton daga sabar bayan an gama karantawa (don kar ya cika mana waje)
+        os.remove(file_location)
+        
+        return {"sakamako": text, "matsayi": "An yi nasara"}
+        
+    except Exception as e:
+        return {"sakamako": f"Akwai kuskure wajen karanta hoto: {str(e)}", "matsayi": "Kuskure"}
 
-# Kofa ta 2: Bayar da Hanya (Navigation)
+# Kofa ta 2: Bayar da Hanya
 @app.post("/hanya")
 def bada_hanya(waje: Waje):
-    # Aikin nemo hanyar zuwa inda aka ambata
     directions = NavigationSystem().get_directions(waje.unguwa)
     return {"sakamako": directions, "matsayi": "An yi nasara"}
 
-# Kofa ta 3: Gane Abubuwa (Object Detection - Misali don an gaba)
+# Kofa ta 3: Gane Abubuwa
 @app.post("/abubuwa")
 def gane_abubuwa():
-    # A nan zamu jona asalin aikin gane abubuwa idan mun shirya masa
     return {"sakamako": "Na gano Kujera, Mutum da Kwamfuta", "matsayi": "Gwajin Kofa"}
