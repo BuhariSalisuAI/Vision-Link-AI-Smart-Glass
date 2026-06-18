@@ -7,7 +7,7 @@ import urllib.request
 import os
 import uvicorn
 
-app = FastAPI(title="Vision-Link AI Smart Glasses", version="0.3.0")
+app = FastAPI(title="Vision-Link AI Smart Glasses", version="0.4.0")
 
 CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
            "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
@@ -25,7 +25,6 @@ def download_models():
         url = "https://raw.githubusercontent.com/chuanqi305/MobileNet-SSD/master/mobilenet_iter_73000.caffemodel"
         urllib.request.urlretrieve(url, MODEL_PATH)
 
-# Wannan shi ne kyakkyawan shafin gaba da zai baka damar saka hoto lafiya lau
 @app.get("/", response_class=HTMLResponse)
 async def home():
     html_home = """
@@ -44,7 +43,7 @@ async def home():
     <body>
         <div class="card">
             <h2 style="color: #1b5e20;">👓 Vision-Link AI</h2>
-            <p style="color: #666;">Zaɓi hoton mota ko mutum don duba basirar AI</p>
+            <p style="color: #666;">Zaɓi hoton mota, mutum, ko keke don gwada basirar AI</p>
             <form action="/abubuwa" method="post" enctype="multipart/form-data">
                 <input type="file" name="hoto" accept="image/*" required>
                 <button type="submit" class="btn">🚀 FARA GANE ABUTU</button>
@@ -77,14 +76,40 @@ async def gane_abubuwa(hoto: UploadFile = File(...)):
                 if object_name not in abubuwan_da_aka_gani:
                     abubuwan_da_aka_gani.append(object_name)
 
-        if not abubuwan_da_aka_gani:
-            fada_da_baki = "Ban gano komai ba a gabanka"
-        else:
-            fassara = {"car": "mota", "person": "mutum", "bus": "babban mota", "motorbike": "babur"}
-            fassarar_hausa = [fassara.get(obj, obj) for obj in abubuwan_da_aka_gani]
-            gajeren_rubutu = ", ".join(fassarar_hausa)
-            fada_da_baki = f"Ina gani {gajeren_rubutu}"
+        # Kamus na fassarar Hausa da Turanci
+        fassara_dict = {
+            "car": {"ha": "mota", "en": "Car"},
+            "person": {"ha": "mutum", "en": "Person"},
+            "bus": {"ha": "babban mota", "en": "Bus"},
+            "motorbike": {"ha": "babur", "en": "Motorbike"},
+            "bicycle": {"ha": "keke", "en": "Bicycle"},
+            "chair": {"ha": "kujera", "en": "Chair"},
+            "diningtable": {"ha": "tebur", "en": "Table"},
+            "bottle": {"ha": "gora", "en": "Bottle"}
+        }
 
+        if not abubuwan_da_aka_gani:
+            fada_da_baki = "Malam, ban gano kowane cikas ba a gabanka a yanzu."
+            rubutun_shafi = "Babu abin da aka gano / No objects detected"
+        else:
+            hausa_list = []
+            rubutu_list = []
+            
+            for obj in abubuwan_da_aka_gani:
+                if obj in fassara_dict:
+                    hausa_list.append(fassara_dict[obj]["ha"])
+                    rubutu_list.append(f"{fassara_dict[obj]['en']} ({fassara_dict[obj]['ha']})")
+                else:
+                    hausa_list.append(obj)
+                    rubutu_list.append(obj)
+            
+            gajeren_hausa = ", ".join(hausa_list)
+            rubutun_shafi = ", ".join(rubutu_list)
+            
+            # Wannan shi ne babban gargaɗin da kake buƙata na Hausa
+            fada_da_baki = f"Malam, ina ganin {gajeren_hausa} a gabanka, ka koma ɗayan hannun saboda matsalar idanunka."
+
+        # Samar da muryar Hausa ta gTTS
         from gtts import gTTS
         fayil_sauti = "sauti.mp3"
         tts = gTTS(text=fada_da_baki, lang='ha', slow=False)
@@ -113,7 +138,9 @@ async def gane_abubuwa(hoto: UploadFile = File(...)):
             <div class="card">
                 <h2 style="color: #1b5e20;">👓 Vision-Link AI</h2>
                 <hr style="border: 0; border-top: 1px solid #eee;">
-                <p style="font-size: 22px; font-weight: bold; color: #333;">"{fada_da_baki}"</p>
+                
+                <p style="font-size: 22px; font-weight: bold; color: #1b5e20; margin-bottom: 5px;">{rubutun_shafi}</p>
+                <p style="font-size: 15px; color: #555; font-style: italic; padding: 0 10px;">"{fada_da_baki}"</p>
                 
                 <audio autoplay id="player" style="width:100%; margin-top:10px;" controls>
                     <source src="data:audio/mp3;base64,{audio_encoded}" type="audio/mp3">
@@ -134,4 +161,5 @@ async def gane_abubuwa(hoto: UploadFile = File(...)):
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
-    uvicorn.run(app, host="0.0.0.0", port=port)                      
+    uvicorn.run(app, host="0.0.0.0", port=port)
+               
