@@ -13,3 +13,4 @@ twilio          # WhatsApp
 uvicorn
 pytesseract
 fastapi
+python-multipart
