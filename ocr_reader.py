@@ -6,7 +6,7 @@ import cv2
 import pytesseract
 import numpy as np
 import config
-from TTS import speak_hausa
+from TTS import print
 
 class OCRReader:
     def __init__(self):
@@ -43,10 +43,10 @@ class OCRReader:
         elif camera:
             ret, image = camera.read()
             if not ret:
-                speak_hausa("Ba na iya karɓar hoto daga kyamara.")
+                print("Ba na iya karɓar hoto daga kyamara.")
                 return None
         else:
-            speak_hausa("Babu hoto don karatu.")
+            print("Babu hoto don karatu.")
             return None
         
         # Preprocess
@@ -68,19 +68,19 @@ class OCRReader:
                 print(f"OCR Result: {text}")
                 return text
             else:
-                speak_hausa(config.HAUSA_PHRASES['no_text'])
+                print(config.HAUSA_PHRASES['no_text'])
                 return None
                 
         except Exception as e:
             print(f"OCR Error: {e}")
-            speak_hausa("Akwai matsala wajen karatu rubutu.")
+            print("Akwai matsala wajen karatu rubutu.")
             return None
     
     def read_text_live(self, camera, duration=3):
         """
         Read text from live camera feed for specified duration
         """
-        speak_hausa("Ina karatu rubutu. Ka tsaya da kyamara a kan rubutu.")
+        print("Ina karatu rubutu. Ka tsaya da kyamara a kan rubutu.")
         
         import time
         start_time = time.time()
@@ -97,10 +97,10 @@ class OCRReader:
                     best_text = text.strip()
         
         if best_text:
-            speak_hausa(f"Na gano rubutu: {best_text}")
+            print(f"Na gano rubutu: {best_text}")
             return best_text
         else:
-            speak_hausa("Babu rubutu da na iya karatu.")
+            print("Babu rubutu da na iya karatu.")
             return None
 
 def read_text_from_camera(camera):
