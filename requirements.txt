@@ -14,6 +14,7 @@ uvicorn
 pytesseract
 fastapi
 python-multipart
-gtts
+gTTS
 opencv-python-headless
 numpy
+Ultralytics
