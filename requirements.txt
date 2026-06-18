@@ -17,4 +17,3 @@ python-multipart
 gTTS
 opencv-python-headless
 numpy
-Ultralytics
