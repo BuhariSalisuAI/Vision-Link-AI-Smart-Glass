@@ -2,7 +2,7 @@
 FROM python:3.9-slim
 
 # 2. Saka ainihin injin karatu na Tesseract a cikin Linux din sabar
-RUN apt-get update && apt-get install -y tesseract-ocr tesseract-ocr-hau
+RUN apt-get update && apt-get install -y tesseract-ocr tesseract-ocr-hau espeak
 
 # 3. Tsara wajen aiki
 WORKDIR /app
