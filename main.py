@@ -1,5 +1,5 @@
 from speech_recognition import listen_for_command
-from text_to_speech import speak_hausa
+from TTS import speak_hausa
 from object_detection import detect_objects
 from ocr_reader import read_text
 from navigation import get_directions
