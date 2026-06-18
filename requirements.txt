@@ -12,3 +12,4 @@ geopy
 twilio          # WhatsApp
 uvicorn
 pytesseract
+fastapi
