@@ -7,7 +7,7 @@ import urllib.request
 import os
 import uvicorn
 
-app = FastAPI(title="Vision-Link AI Smart Glasses", version="0.2.3")
+app = FastAPI(title="Vision-Link AI Smart Glasses", version="0.2.4")
 
 CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
            "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
@@ -51,11 +51,10 @@ async def gane_abubuwa(hoto: UploadFile = File(...)):
                 if object_name not in abubuwan_da_aka_gani:
                     abubuwan_da_aka_gani.append(object_name)
 
-        # Fassara zuwa Hausa ta gari
+        # Gyaran fassara don makaho ya fahimta lafiya
         if not abubuwan_da_aka_gani:
             fada_da_baki = "Ban gano komai ba a gabanka"
         else:
-            // Gyaran fassara don makaho ya fahimta
             fassara = {"car": "mota", "person": "mutum", "bus": "babban mota", "motorbike": "babur"}
             fassarar_hausa = [fassara.get(obj, obj) for obj in abubuwan_da_aka_gani]
             gajeren_rubutu = ", ".join(fassarar_hausa)
@@ -94,10 +93,10 @@ async def gane_abubuwa(hoto: UploadFile = File(...)):
                 <p style="font-size: 20px; font-weight: bold; color: #333;">"{fada_da_baki}"</p>
                 
                 <audio id="myAudio" autoplay style="width: 100%; margin-top: 10px;">
-                    <source src="data:audio/mp3;base64,{audio_encoded}" type="audio/mp3">
+                    <source src="data:audio/mp3;base64={audio_encoded}" type="audio/mp3">
                 </audio>
                 
-                <button class="btn" onclick="document.getElementById('myAudio').play()">📢 SAKE JIN TURANCI/HAUSA</button>
+                <button class="btn" onclick="document.getElementById('myAudio').play()">📢 SAKE JIN MURYAR</button>
                 <br><br>
                 <p style="font-size: 12px; color: #666;">Hoton da aka duba:</p>
                 <img src="data:image/jpeg;base64,{hoto_encoded}" />
@@ -112,4 +111,4 @@ async def gane_abubuwa(hoto: UploadFile = File(...)):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
-               
+           
