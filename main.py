@@ -7,7 +7,7 @@ import urllib.request
 import os
 import uvicorn
 
-app = FastAPI(title="Vision-Link AI Smart Glasses", version="0.4.0")
+app = FastAPI(title="Vision-Link AI Smart Glasses", version="0.5.0")
 
 CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
            "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
@@ -43,7 +43,7 @@ async def home():
     <body>
         <div class="card">
             <h2 style="color: #1b5e20;">👓 Vision-Link AI</h2>
-            <p style="color: #666;">Zaɓi hoton mota, mutum, ko keke don gwada basirar AI</p>
+            <p style="color: #666;">Zaɓi hoton mota, mutum, ko kujera don duba basirar AI</p>
             <form action="/abubuwa" method="post" enctype="multipart/form-data">
                 <input type="file" name="hoto" accept="image/*" required>
                 <button type="submit" class="btn">🚀 FARA GANE ABUTU</button>
@@ -89,7 +89,7 @@ async def gane_abubuwa(hoto: UploadFile = File(...)):
         }
 
         if not abubuwan_da_aka_gani:
-            fada_da_baki = "Malam, ban gano kowane cikas ba a gabanka a yanzu."
+            fada_da_baki = "Malam, ban gano kowane cikas ba a gabanka."
             rubutun_shafi = "Babu abin da aka gano / No objects detected"
         else:
             hausa_list = []
@@ -103,11 +103,11 @@ async def gane_abubuwa(hoto: UploadFile = File(...)):
                     hausa_list.append(obj)
                     rubutu_list.append(obj)
             
-            gajeren_hausa = ", ".join(hausa_list)
+            gajeren_hausa = " da ".join(hausa_list)
             rubutun_shafi = ", ".join(rubutu_list)
             
-            # Wannan shi ne babban gargaɗin da kake buƙata na Hausa
-            fada_da_baki = f"Malam, ina ganin {gajeren_hausa} a gabanka, ka koma ɗayan hannun saboda matsalar idanunka."
+            # Wannan ita ce ainihin jimlar da kake so Buhari abokina
+            fada_da_baki = f"Malam, na gano {gajeren_hausa} a gabanka. Ka koma ɗayan hannun saboda matsalar idanunka."
 
         # Samar da muryar Hausa ta gTTS
         from gtts import gTTS
@@ -139,8 +139,8 @@ async def gane_abubuwa(hoto: UploadFile = File(...)):
                 <h2 style="color: #1b5e20;">👓 Vision-Link AI</h2>
                 <hr style="border: 0; border-top: 1px solid #eee;">
                 
-                <p style="font-size: 22px; font-weight: bold; color: #1b5e20; margin-bottom: 5px;">{rubutun_shafi}</p>
-                <p style="font-size: 15px; color: #555; font-style: italic; padding: 0 10px;">"{fada_da_baki}"</p>
+                <p style="font-size: 24px; font-weight: bold; color: #1b5e20; margin-bottom: 5px;">{rubutun_shafi}</p>
+                <p style="font-size: 16px; color: #333; font-weight: 500; padding: 0 10px;">"{fada_da_baki}"</p>
                 
                 <audio autoplay id="player" style="width:100%; margin-top:10px;" controls>
                     <source src="data:audio/mp3;base64,{audio_encoded}" type="audio/mp3">
