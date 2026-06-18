@@ -1,29 +1,31 @@
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import HTMLResponse
+from ultralytics import YOLO
 import cv2
 import numpy as np
 import base64
-import urllib.request
 import os
 import uvicorn
 
-app = FastAPI(title="Vision-Link AI Smart Glasses", version="0.5.0")
+app = FastAPI(title="Vision-Link AI Smart Glasses (Ultralytics)", version="1.0.0")
 
-CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
-           "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
-           "dog", "horse", "motorbike", "person", "pottedplant", "sheep",
-           "sofa", "train", "tvmonitor"]
+# Za mu yi amfani da yolo8n (YOLOv8 Nano) domin yana da sauri kuma ba ya cin nauyi a Railway
+model = YOLO("yolov8n.pt")
 
-PROTOTXT_PATH = "deploy.prototxt"
-MODEL_PATH = "mobilenet_iter_73000.caffemodel"
-
-def download_models():
-    if not os.path.exists(PROTOTXT_PATH):
-        url = "https://raw.githubusercontent.com/chuanqi305/MobileNet-SSD/master/deploy.prototxt"
-        urllib.request.urlretrieve(url, PROTOTXT_PATH)
-    if not os.path.exists(MODEL_PATH):
-        url = "https://raw.githubusercontent.com/chuanqi305/MobileNet-SSD/master/mobilenet_iter_73000.caffemodel"
-        urllib.request.urlretrieve(url, MODEL_PATH)
+# Kamus na fassarar Hausa da Turanci na kowane abu da YOLO zai iya gani
+fassara_dict = {
+    "car": {"ha": "mota", "en": "Car"},
+    "person": {"ha": "mutum", "en": "Person"},
+    "bus": {"ha": "babban mota", "en": "Bus"},
+    "motorbike": {"ha": "babur", "en": "Motorbike"},
+    "bicycle": {"ha": "keke", "en": "Bicycle"},
+    "chair": {"ha": "kujera", "en": "Chair"},
+    "diningtable": {"ha": "tebur", "en": "Table"},
+    "bottle": {"ha": "gora", "en": "Bottle"},
+    "stop sign": {"ha": "alamar tsayawa", "en": "Stop Sign"},
+    "dog": {"ha": "kare", "en": "Dog"},
+    "cat": {"ha": "kyanwa", "en": "Cat"}
+}
 
 @app.get("/", response_class=HTMLResponse)
 async def home():
@@ -42,8 +44,8 @@ async def home():
     </head>
     <body>
         <div class="card">
-            <h2 style="color: #1b5e20;">👓 Vision-Link AI</h2>
-            <p style="color: #666;">Zaɓi hoton mota, mutum, ko kujera don duba basirar AI</p>
+            <h2 style="color: #1b5e20;">👓 Vision-Link AI (Ultralytics)</h2>
+            <p style="color: #666;">Tura hoto don gwada basirar sabon tsarin YOLO</p>
             <form action="/abubuwa" method="post" enctype="multipart/form-data">
                 <input type="file" name="hoto" accept="image/*" required>
                 <button type="submit" class="btn">🚀 FARA GANE ABUTU</button>
@@ -57,36 +59,19 @@ async def home():
 @app.post("/abubuwa", response_class=HTMLResponse)
 async def gane_abubuwa(hoto: UploadFile = File(...)):
     try:
-        download_models()
         contents = await hoto.read()
         nparr = np.frombuffer(contents, np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         
-        net = cv2.dnn.readNetFromCaffe(PROTOTXT_PATH, MODEL_PATH)
-        blob = cv2.dnn.blobFromImage(cv2.resize(img, (300, 300)), 0.007843, (300, 300), 127.5)
-        net.setInput(blob)
-        detections = net.forward()
-
+        # Gudanar da bincike ta amfani da Ultralytics YOLO
+        results = model(img)
+        
         abubuwan_da_aka_gani = []
-        for i in range(detections.shape[2]):
-            confidence = detections[0, 0, i, 2]
-            if confidence > 0.4:
-                class_id = int(detections[0, 0, i, 1])
-                object_name = CLASSES[class_id]
-                if object_name not in abubuwan_da_aka_gani:
-                    abubuwan_da_aka_gani.append(object_name)
-
-        # Kamus na fassarar Hausa da Turanci
-        fassara_dict = {
-            "car": {"ha": "mota", "en": "Car"},
-            "person": {"ha": "mutum", "en": "Person"},
-            "bus": {"ha": "babban mota", "en": "Bus"},
-            "motorbike": {"ha": "babur", "en": "Motorbike"},
-            "bicycle": {"ha": "keke", "en": "Bicycle"},
-            "chair": {"ha": "kujera", "en": "Chair"},
-            "diningtable": {"ha": "tebur", "en": "Table"},
-            "bottle": {"ha": "gora", "en": "Bottle"}
-        }
+        for r in results:
+            for c in r.boxes.cls:
+                name = model.names[int(c)]
+                if name not in abubuwan_da_aka_gani:
+                    abubuwan_da_aka_gani.append(name)
 
         if not abubuwan_da_aka_gani:
             fada_da_baki = "Malam, ban gano kowane cikas ba a gabanka."
@@ -106,10 +91,9 @@ async def gane_abubuwa(hoto: UploadFile = File(...)):
             gajeren_hausa = " da ".join(hausa_list)
             rubutun_shafi = ", ".join(rubutu_list)
             
-            # Wannan ita ce ainihin jimlar da kake so Buhari abokina
-            fada_da_baki = f"Malam, na gano {gajeren_hausa} a gabanka. Ka koma ɗayan hannun saboda matsalar idanunka."
+            fada_da_baki = f"Malam, na gano {gajeren_hausa} a gabanka, ka koma ɗayan hannun saboda matsalar idanunka."
 
-        # Samar da muryar Hausa ta gTTS
+        # Samar da muryar Hausa
         from gtts import gTTS
         fayil_sauti = "sauti.mp3"
         tts = gTTS(text=fada_da_baki, lang='ha', slow=False)
@@ -162,4 +146,5 @@ async def gane_abubuwa(hoto: UploadFile = File(...)):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
+           
                
