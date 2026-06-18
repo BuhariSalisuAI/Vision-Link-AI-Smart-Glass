@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 app = FastAPI()
- @app.get("/")
-   def home():
+@app.get("/")
+def home():
        return {"message": "Vision-Link AI is Live and Running!"}
 from speech_recognition import listen_for_command
 from TTS import speak_hausa
