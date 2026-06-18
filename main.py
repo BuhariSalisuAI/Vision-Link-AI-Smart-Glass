@@ -1,7 +1,7 @@
 from speech_recognition import listen_for_command
 from TTS import speak_hausa
 from object_detection import detect_objects
-from ocr_reader import read_text
+from ocr_reader import OCRReader
 from navigation import get_directions
 
 def main():
@@ -15,7 +15,7 @@ def main():
             speak_hausa(f"Na gano: {objects}")
         
         elif "karatu" in command:
-            text = read_text()
+            text = OCRReader().read_text()
             speak_hausa(text)
         
         elif "hanya" in command:
