@@ -10,3 +10,4 @@ pillow
 pyserial
 geopy
 twilio          # WhatsApp
+uvicorn
