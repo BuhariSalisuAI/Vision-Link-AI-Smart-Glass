@@ -14,3 +14,4 @@ uvicorn
 pytesseract
 fastapi
 python-multipart
+gtts
