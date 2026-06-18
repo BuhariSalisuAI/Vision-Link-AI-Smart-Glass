@@ -1,52 +1,59 @@
 from fastapi import FastAPI, UploadFile, File
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
-import shutil
+import pytesseract
+from PIL import Image
+import io
 import os
 
-# 1. Janyo fayilolin ayyukan AI dinka
-from ocr_reader import OCRReader
-from navigation import NavigationSystem
+# Bayanin asali na API din
+app = FastAPI(title="Vision-Link AI Smart Glasses", version="0.1.0")
 
-# 2. Kirkirar sabar API
-app = FastAPI()
+# Tsarin karbar rubutu daga wajen mai amfani don juyawa ya zama sauti
+class RubutunSauti(BaseModel):
+    rubutu: str
 
-class Waje(BaseModel):
-    unguwa: str
-
-# Kofa ta 0: Gwajin Sabar
 @app.get("/")
-def home():
-    return {"message": "Vision-Link AI is Live and Running!"}
+async def home():
+    return {"sako": "Sabar Vision-Link tana aiki lafiya! 🚀"}
 
-# ==========================================
-# SABON TSARIN KOFAR KARATU (Tana karbar hoto yanzu)
-# ==========================================
-@app.post("/karatu")
+@app.post("/karatu", summary="Karanta Rubutu")
 async def karanta_rubutu(hoto: UploadFile = File(...)):
     try:
-        # 1. Ajiye hoton da aka turo na wucin gadi a cikin sabar
-        file_location = f"temp_{hoto.filename}"
-        with open(file_location, "wb") as buffer:
-            shutil.copyfileobj(hoto.file, buffer)
+        # Karanta hoton da aka turo
+        contents = await hoto.read()
+        image = Image.open(io.BytesIO(contents))
         
-        # 2. Mika hoton zuwa ga aikin OCR don ya karanta rubutun
-        text = OCRReader().read_text(file_location) 
+        # Ciro rubutu daga hoton (OCR) da turanci
+        rubutu = pytesseract.image_to_string(image, lang='eng')
         
-        # 3. Goge hoton daga sabar bayan an gama karantawa (don kar ya cika mana waje)
-        os.remove(file_location)
-        
-        return {"sakamako": text, "matsayi": "An yi nasara"}
-        
+        return {"sakamako": rubutu.strip(), "matsayi": "yayi"}
     except Exception as e:
-        return {"sakamako": f"Akwai kuskure wajen karanta hoto: {str(e)}", "matsayi": "Kuskure"}
+        return {"sakamako": None, "matsayi": f"An samu matsala: {str(e)}"}
 
-# Kofa ta 2: Bayar da Hanya
-@app.post("/hanya")
-def bada_hanya(waje: Waje):
-    directions = NavigationSystem().get_directions(waje.unguwa)
-    return {"sakamako": directions, "matsayi": "An yi nasara"}
+@app.post("/hanya", summary="Bada Hanya")
+async def bada_hanya(hoto: UploadFile = File(...)):
+    # Wannan kofar gane hanya ce (Kamar yadda aka tsara a baya)
+    return {"sakamako": "Wannan kofar gane hanya ce", "matsayi": "yayi"}
 
-# Kofa ta 3: Gane Abubuwa
-@app.post("/abubuwa")
-def gane_abubuwa():
-    return {"sakamako": "Na gano Kujera, Mutum da Kwamfuta", "matsayi": "Gwajin Kofa"}
+@app.post("/abubuwa", summary="Gane Abubuwa")
+async def gane_abubuwa(hoto: UploadFile = File(...)):
+    # Wannan kofar gane abubuwa ce (Kamar yadda aka tsara a baya)
+    return {"sakamako": "Wannan kofar gane abubuwa ce", "matsayi": "yayi"}
+
+@app.post("/sauti", summary="Maida Rubutu Sauti")
+async def maida_rubutu_sauti(bayanai: RubutunSauti):
+    try:
+        # Sunan fayil din da zai ajiye muryar
+        fayil_sauti = "sakamako_sauti.wav"
+        
+        # Tsabtace rubutun don gujewa matsalar 'quotes' a wajen umarni
+        tsabtace_rubutu = bayanai.rubutu.replace('"', '').replace("'", "")
+        
+        # Amfani da injin eSpeak kai tsaye don hada sautin .wav
+        os.system(f'espeak -w {fayil_sauti} "{tsabtace_rubutu}"')
+        
+        # Dawo da fayil din sautin don a ji a shafin gwaji (Swagger UI)
+        return FileResponse(fayil_sauti, media_type="audio/wav", filename="murya.wav")
+    except Exception as e:
+        return {"matsala": f"An samu matsala wajen juyawa zuwa sauti: {str(e)}"}
