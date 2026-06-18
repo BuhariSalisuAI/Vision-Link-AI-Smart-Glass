@@ -15,3 +15,5 @@ pytesseract
 fastapi
 python-multipart
 gtts
+opencv-python-headless
+numpy
