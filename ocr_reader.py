@@ -6,7 +6,6 @@ import cv2
 import pytesseract
 import numpy as np
 import config
-from TTS import print
 
 class OCRReader:
     def __init__(self):
